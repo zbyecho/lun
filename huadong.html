@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>滑动</title>
+	<meta name="viewport" content="width=device=1.0,maximum-scale=1.0,minimum-scale=1.0"></meta>
+</head>
+	<style>
+		body,ul,li{
+			margin: 0;
+			padding:0;
+			list-style: none;
+			font-family: "Helvetica";
+			font-size: 40px;
+			font-weight: bold;
+			color: #fff;
+		}
+		header{
+			width: 100%;
+			height: 100px;
+			background: #444;
+		}
+		.box{
+			width: 100%;
+			height: 400px;
+			position: relative;
+			overflow: hidden;
+		}
+		.uls{
+			width:400%;
+			height: 100%;
+			/*position: absolute;
+			top:0;
+			transform:tranlate3d(0,0,0);*/
+		}
+		.uls:after{
+			content: '';
+			display: block;
+			clear: both;
+		}
+		.uls .lis{
+			width: 25%;
+			height: 100%;
+			float: left;
+			line-height: 400px;
+			text-align: center;
+		}
+	</style>
+<body>
+	<header></header>
+	<div class="box">
+		<ul class="uls">
+			<li class="lis" style="background:red;">one</li>
+			<li class="lis" style="background:green;">two</li>
+			<li class="lis" style="background:#000;">there</li>
+			<li class="lis" style="background:#ff4400;">four</li>
+		</ul>
+	</div>
+	<script>
+			var uls = document.querySelector('.uls');
+			var lis = document.querySelectorAll(".uls>.lis");
+			var cw = document.documentElement.clientWidth
+			var index=0;
+			var t = setInterval(moves,1000);
+			function moves(){
+				index++
+				uls.style.transition="transform .5s";
+				if(index==lis.length){
+					index=0;
+				}
+				uls.style.transform='translate3d('+(-index*cw)+'px,0,0)';
+			}
+	        uls.addEventListener('touchstart',function(e){
+	        	var sh = e.timeStamp;
+				var of=e.targetTouches[0].clientX;
+				var mf=0;
+				clearInterval(t)
+				this.style.transition='';
+				function move(e){
+					mf=e.targetTouches[0].clientX;
+					uls.style.transform='translate3d('+(mf-of-index*cw)+'px,0,0)';
+				}
+				window.addEventListener('touchmove',move);
+				function end(e){
+					var dh=e.timeStamp
+
+				var ka=Math.abs(e.changedTouches[0].clientX-of)
+
+					uls.removeEventListener('touchmove',move);
+					if((Math.abs(mf-of)>(cw/2)&&(ka>30))||(dh-sh<100&&ka>30)){
+						if(mf-of>0){
+							index--;
+						}else{
+							index++;
+						}
+						if(index==lis.length){
+							index=lis.length-1;
+						}
+						else if(index==-1){
+							index=0;
+						}
+						this.style.transition='transform .5s';
+						this.style.transform='translate3d('+(-index*cw)+'px,0,0)';
+					}else{
+						this.style.transition='transform .5s';
+						this.style.transform='translate3d('+(-index*cw)+'px,0,0)';
+					}
+					uls.removeEventListener('touchend',end);
+					t = setInterval(moves,1000)
+				}
+				uls.addEventListener('touchend',end);
+
+			})
+
+	</script>
+</body>
+</html>
